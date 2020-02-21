@@ -109,7 +109,7 @@ public class ERFExporter {
 		FileUtils.save(erf.getName().replace('/', '-') + ".json", jsonString);
 	}
 
-	public static void ExportToGeoJson(ERF erf, String filename, double maxDistance, Location siteLocation, int maxSources)
+	public static void ExportToGeoJson(ERF erf, String filename, double maxDistance, Location siteLocation, int maxSources, double minMag, double maxMag)
 	{
 		JsonObject erfGeoJson = new JsonObject();
 		JsonArray featuresJson = new JsonArray();
@@ -138,65 +138,71 @@ public class ERFExporter {
 					
 					ProbEqkRupture rupture = rupList.get(j);
 					System.out.print("\rProcessing rupture " + j+1 + " of Source " + i);
-
-					JsonObject ruptureJson = new JsonObject();
-					JsonObject ruptureGeometryJson = new JsonObject();
-					JsonObject rupturePropretiesJson = new JsonObject();
 					
-					RuptureSurface ruptureSurface = rupture.getRuptureSurface();
-
-					if (ruptureSurface.isPointSurface())
-					{
-						PointSurface pointSurface = (PointSurface)ruptureSurface;
-						Location location = pointSurface.getLocation();
-						ruptureGeometryJson.add("type", new JsonPrimitive("Point"));
-						JsonArray coordinates = new JsonArray();
-						coordinates.add(location.getLongitude());
-						coordinates.add(location.getLatitude());
-						ruptureGeometryJson.add("coordinates", coordinates);
-					}
-					else
-					{
-						ruptureGeometryJson.add("type", new JsonPrimitive("LineString"));
-						JsonArray coordinates = new JsonArray();
-						
-						FaultTrace trace;
-						try
-						{
-							trace = ruptureSurface.getUpperEdge();
-						}
-						catch(Exception e)
-						{
-							trace = ruptureSurface.getEvenlyDiscritizedUpperEdge();
-						}
-						
-						for (Location location : trace)
-						{
-							//TODO: change to corners
-							JsonArray pointCoordinates = new JsonArray();
-							pointCoordinates.add(location.getLongitude());
-							pointCoordinates.add(location.getLatitude());
-							coordinates.add(pointCoordinates);
-						}
-		
-						ruptureGeometryJson.add("coordinates", coordinates);
-					}
+					double rupMag = rupture.getMag();
 					
-					rupturePropretiesJson.add("Name", new JsonPrimitive(rupSource.getName()));
-					rupturePropretiesJson.add("Rupture", new JsonPrimitive(j));
-					rupturePropretiesJson.add("Source", new JsonPrimitive(i));
-					rupturePropretiesJson.add("Distance", new JsonPrimitive(distanceToRup));
-					rupturePropretiesJson.add("Magnitude", new JsonPrimitive(rupture.getMag()));
-					rupturePropretiesJson.add("Probability", new JsonPrimitive(rupture.getProbability()));
-					double meanAnnualRate = rupture.getMeanAnnualRate(erf.getTimeSpan().getDuration());
-					rupturePropretiesJson.add("MeanAnnualRate", new JsonPrimitive(meanAnnualRate));
+					if(rupMag >= minMag && rupMag <= maxMag)
+					{
+						System.out.print("\rRupMag = " + rupMag);
+						JsonObject ruptureJson = new JsonObject();
+						JsonObject ruptureGeometryJson = new JsonObject();
+						JsonObject rupturePropretiesJson = new JsonObject();
+						
+						RuptureSurface ruptureSurface = rupture.getRuptureSurface();
 
-										
-					ruptureJson.add("type", new JsonPrimitive("Feature"));				
-					ruptureJson.add("geometry", ruptureGeometryJson);
-					ruptureJson.add("properties", rupturePropretiesJson);
+						if (ruptureSurface.isPointSurface())
+						{
+							PointSurface pointSurface = (PointSurface)ruptureSurface;
+							Location location = pointSurface.getLocation();
+							ruptureGeometryJson.add("type", new JsonPrimitive("Point"));
+							JsonArray coordinates = new JsonArray();
+							coordinates.add(location.getLongitude());
+							coordinates.add(location.getLatitude());
+							ruptureGeometryJson.add("coordinates", coordinates);
+						}
+						else
+						{
+							ruptureGeometryJson.add("type", new JsonPrimitive("LineString"));
+							JsonArray coordinates = new JsonArray();
+							
+							FaultTrace trace;
+							try
+							{
+								trace = ruptureSurface.getUpperEdge();
+							}
+							catch(Exception e)
+							{
+								trace = ruptureSurface.getEvenlyDiscritizedUpperEdge();
+							}
+							
+							for (Location location : trace)
+							{
+								//TODO: change to corners
+								JsonArray pointCoordinates = new JsonArray();
+								pointCoordinates.add(location.getLongitude());
+								pointCoordinates.add(location.getLatitude());
+								coordinates.add(pointCoordinates);
+							}
+			
+							ruptureGeometryJson.add("coordinates", coordinates);
+						}
+						
+						rupturePropretiesJson.add("Name", new JsonPrimitive(rupSource.getName()));
+						rupturePropretiesJson.add("Rupture", new JsonPrimitive(j));
+						rupturePropretiesJson.add("Source", new JsonPrimitive(i));
+						rupturePropretiesJson.add("Distance", new JsonPrimitive(distanceToRup));
+						rupturePropretiesJson.add("Magnitude", new JsonPrimitive(rupMag));
+						rupturePropretiesJson.add("Probability", new JsonPrimitive(rupture.getProbability()));
+						double meanAnnualRate = rupture.getMeanAnnualRate(erf.getTimeSpan().getDuration());
+						rupturePropretiesJson.add("MeanAnnualRate", new JsonPrimitive(meanAnnualRate));
 
-					featuresJson.add(ruptureJson);
+											
+						ruptureJson.add("type", new JsonPrimitive("Feature"));				
+						ruptureJson.add("geometry", ruptureGeometryJson);
+						ruptureJson.add("properties", rupturePropretiesJson);
+
+						featuresJson.add(ruptureJson);
+					}
 				}
 				
 //				JsonObject sourceJson = new JsonObject();

@@ -145,7 +145,7 @@ public class EQHazardCalc implements ParameterChangeWarningListener {
 				ERF erf = calc.getERF(rupconfig.RuptureForecast());
 				SiteLocation siteLocation = siteConfig.Location();
 				Location location = new Location(siteLocation.Latitude(), siteLocation.Longitude());
-				ERFExporter.ExportToGeoJson(erf, args[1], rupconfig.MaxDistance(), location, rupconfig.MaxSources());
+				ERFExporter.ExportToGeoJson(erf, args[1], rupconfig.MaxDistance(), location, rupconfig.MaxSources(), rupconfig.MinMagnitude(), rupconfig.MaxMagnitude());
 				
 				System.exit(0);
 			}

@@ -1,0 +1,18 @@
+{
+	"Site": {
+		"Type": "SingleLocation",
+		"Location": {
+			"Latitude": 37.8719,
+			"Longitude": -122.2585
+		}
+	},
+	"EqRupture": {
+		"Type": "ERF",
+		"RuptureForecast": "Mean UCERF3",
+		"ExportGeoJson": true,
+		"MaxDistance": 100,
+		"MaxSources": 100,
+		"MinMagnitude": 6,
+		"MaxMagnitude": 7
+	}
+}
