@@ -160,11 +160,7 @@ public class EQHazardCalc implements ParameterChangeWarningListener {
 					
 				SiteLocation siteLocation = siteConfig.Location();
 				Location location = new Location(siteLocation.Latitude(), siteLocation.Longitude());
-<<<<<<< HEAD
-				ERFExporter.ExportToGeoJson(erf, args[1], rupconfig.MaxDistance(), location, rupconfig.MaxSources(), rupconfig.MinMagnitude(), rupconfig.MaxMagnitude());
-=======
 				ERFExporter.ExportToGeoJson(erf, args[1], rupConfig.MaxDistance(), location, rupConfig.MaxSources());
->>>>>>> 21057c63be248a8588b87b894571c448c0095746
 				
 				System.exit(0);
 			}

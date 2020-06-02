@@ -57,17 +57,8 @@ public class EqRuptureConfig
 	@SerializedName("MaxSources")
 	private Integer m_maxSources = null;
 	
-<<<<<<< HEAD
-	@SerializedName("MinMagnitude")
-	private Double m_minMag = null;
-	
-	@SerializedName("MaxMagnitude")
-	private Double m_maxMag = null;
-=======
 	@SerializedName("Parameters")
 	private Map<String, Object> m_parameters = null;
-	
->>>>>>> 21057c63be248a8588b87b894571c448c0095746
 	
 	public EqRuptureConfig(RuptureLocation location, double magnitude, double averageDip, double averageRake)
 	{
@@ -142,20 +133,9 @@ public class EqRuptureConfig
 		return this.m_maxSources;
 	}
 	
-<<<<<<< HEAD
-	public double MinMagnitude()
-	{
-		return this.m_minMag;
-	}
-	
-	public double MaxMagnitude()
-	{
-		return this.m_maxMag;
-=======
 	public Map<String, Object> Parameters()
 	{
 		return this.m_parameters;
->>>>>>> 21057c63be248a8588b87b894571c448c0095746
 	}
 	
 	public void SetRupture(double magnitude,  double averageDip, double averageRake, double probability, double meanAnnualRate,  ArrayList<RuptureLocation> surface)
